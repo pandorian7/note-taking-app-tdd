@@ -2,7 +2,6 @@ package com.pandorian.tdd_bdd.service;
 
 import com.pandorian.tdd_bdd.entity.User;
 import com.pandorian.tdd_bdd.exceptions.*;
-import com.pandorian.tdd_bdd.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,10 +22,13 @@ public class UserServiceTest {
 
     private User user;
 
+    private String password;
+
     @BeforeEach
     void init() {
+        password = "Alice@123";
         user = new User(
-                "alice", "Alice@123",
+                "alice", password,
                 "Alice", "Rowling"
         );
     }
@@ -101,5 +103,51 @@ public class UserServiceTest {
             }, "Password Complexity Test Failed for password: %s".formatted(password));
         }
     }
-    
+
+    @Test
+    void signup_failure_first_name_required() {
+        user.setFirstName("");
+        assertThrows(NameEmptyException.class, () -> {
+            userService.signup(user);
+        }, "Firstname Should not be Empty");
+    }
+
+    @Test
+    void signup_failure_last_name_required() {
+        user.setLastName("");
+        assertThrows(NameEmptyException.class, () -> {
+            userService.signup(user);
+        }, "Lastname Should not be Empty");
+    }
+
+    @Test
+    void login_success() {
+        userService.signup(user);
+        User res = userService.login(user.getUsername(), password);
+        assertEquals(res.getUsername(), user.getUsername());
+        assertEquals(res.getFirstName(), user.getFirstName());
+        assertEquals(res.getLastName(), user.getLastName());
+    }
+
+    @Test
+    void login_failure_username_required() {
+        assertThrows(UsernameEmptyException.class, () -> {
+            userService.login("", password);
+        }, "Username is required");
+    }
+
+    @Test
+    void login_failure_password_required() {
+        assertThrows(PasswordEmptyException.class, () -> {
+            userService.login(user.getUsername(), "");
+        }, "Password is required");
+    }
+
+    @Test
+    void login_failure_credentials_wrong() {
+        assertThrows(IncorrectUsernameOrPasswordException.class, () -> {
+            userService.signup(user);
+            userService.login("Wrong Alice", "Not Her Password");
+        }, "Username/Password Incorrect");
+    }
 }
