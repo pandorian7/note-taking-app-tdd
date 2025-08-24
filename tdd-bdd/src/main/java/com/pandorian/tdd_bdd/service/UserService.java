@@ -58,6 +58,8 @@ public class UserService {
 
         if (username.isBlank()) throw new UsernameEmptyException();
 
+        if (password.isBlank()) throw new PasswordEmptyException();
+
         return userRepository.findByUsernameAndPassword(username, password);
     }
 
