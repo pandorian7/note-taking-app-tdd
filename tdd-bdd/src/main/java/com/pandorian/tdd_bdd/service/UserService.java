@@ -12,6 +12,7 @@ import com.pandorian.tdd_bdd.entity.User;
 public class UserService {
 
     private static final int MINIMUM_USERNAME_LENGTH = 5;
+    private static final int MINIMUM_PASSWORD_LENGTH = 6;
 
     @Autowired
     private UserRepository userRepository;
@@ -32,6 +33,10 @@ public class UserService {
 
         if (user.isPasswordBlank()) {
             throw new PasswordEmptyException();
+        }
+
+        if (user.passwordLength() < MINIMUM_PASSWORD_LENGTH) {
+            throw new PasswordTooShortException(user.passwordLength());
         }
 
         return userRepository.save(user);

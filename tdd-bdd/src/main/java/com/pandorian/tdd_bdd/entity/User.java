@@ -31,11 +31,15 @@ public class User {
     @NonNull
     private String lastName;
 
+    @OneToMany(mappedBy = "owner")
+    @Setter(AccessLevel.NONE)
+    private List<Note> notes;
+
     public boolean isPasswordBlank() {
         return password.isBlank();
     }
 
-    @OneToMany(mappedBy = "owner")
-    @Setter(AccessLevel.NONE)
-    private List<Note> notes;
+    public int passwordLength() {
+        return password.length();
+    }
 }
