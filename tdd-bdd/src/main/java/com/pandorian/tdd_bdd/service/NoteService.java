@@ -44,6 +44,8 @@ public class NoteService {
         if (!userService.existsById(note.getOwner().getId()))
             throw new UserDoesNotExistException(note.getOwner().getId());
 
+        if (note.getTitle().isBlank()) throw new TitleEmptyNoteException();
+
         return noteRepository.save(note);
     }
 
