@@ -18,6 +18,8 @@ public class NoteService {
 
         if (note.getOwner() == null) throw new OwnerlessNoteException();
 
+        if (note.getTitle().isBlank()) throw new TitleEmptyNoteException();
+
         return noteRepository.save(note);
     }
 
