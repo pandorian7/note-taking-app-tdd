@@ -39,6 +39,10 @@ public class UserService {
             throw new PasswordTooShortException(user.passwordLength());
         }
 
+        if (!user.validatePassword()) {
+            throw new PasswordNotComplexEnoughException();
+        }
+
         return userRepository.save(user);
     }
 
