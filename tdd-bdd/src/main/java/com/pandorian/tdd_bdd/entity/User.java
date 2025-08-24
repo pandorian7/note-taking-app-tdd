@@ -3,6 +3,8 @@ package com.pandorian.tdd_bdd.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "users")
@@ -32,4 +34,8 @@ public class User {
     public boolean isPasswordBlank() {
         return password.isBlank();
     }
+
+    @OneToMany(mappedBy = "owner")
+    @Setter(AccessLevel.NONE)
+    private List<Note> notes;
 }
