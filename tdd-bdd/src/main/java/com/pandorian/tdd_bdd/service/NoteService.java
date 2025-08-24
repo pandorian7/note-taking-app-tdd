@@ -46,6 +46,8 @@ public class NoteService {
 
         if (note.getTitle().isBlank()) throw new TitleEmptyNoteException();
 
+        if (note.getContent().isBlank()) throw new ContentEmptyNoteException();
+
         return noteRepository.save(note);
     }
 
