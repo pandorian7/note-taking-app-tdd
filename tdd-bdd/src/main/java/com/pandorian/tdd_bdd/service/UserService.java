@@ -1,8 +1,6 @@
 package com.pandorian.tdd_bdd.service;
 
-import com.pandorian.tdd_bdd.exceptions.UserAlreadyExistsException;
-import com.pandorian.tdd_bdd.exceptions.UsernameEmptyException;
-import com.pandorian.tdd_bdd.exceptions.UsernameTooShortException;
+import com.pandorian.tdd_bdd.exceptions.*;
 import com.pandorian.tdd_bdd.repository.UserRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +28,10 @@ public class UserService {
 
         if (user.getUsername().length() < MINIMUM_USERNAME_LENGTH) {
             throw new UsernameTooShortException(MINIMUM_USERNAME_LENGTH);
+        }
+
+        if (user.isPasswordBlank()) {
+            throw new PasswordEmptyException();
         }
 
         return userRepository.save(user);
