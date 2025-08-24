@@ -171,14 +171,28 @@ public class NoteServiceTest {
 
         @Test
         void modify_note_failure_invalid_owner_id() throws NoSuchFieldException, IllegalAccessException {
-            addUser();
-            Field userIDField = User.class.getDeclaredField("id");
-            userIDField.setAccessible(true);
-            userIDField.set(user, 999L);
-            note.setOwner(user);
+
+            Field idField = Note.class.getDeclaredField("id");
+            idField.setAccessible(true);
+
+            Field ownerIdField = User.class.getDeclaredField("id");
+            ownerIdField.setAccessible(true);
+
+            Note copyNote = new Note();
+            User copyUser = new User();
+
+            BeanUtils.copyProperties(note, copyNote);
+            BeanUtils.copyProperties(user, copyUser);
+
+            addNote();
+
+            idField.set(copyNote, note.getId());
+            ownerIdField.set(copyUser, 999L);
+
+            copyNote.setOwner(copyUser);
 
             assertThrows(UserDoesNotExistException.class, () -> {
-                noteService.modifyNote(note);
+                noteService.modifyNote(copyNote);
             }, "Updated a Note with Non-Existent User");
         }
 
