@@ -1,5 +1,6 @@
 package com.pandorian.tdd_bdd.service;
 
+import com.pandorian.tdd_bdd.exceptions.UserAlreadyExistsException;
 import com.pandorian.tdd_bdd.repository.UserRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,11 @@ public class UserService {
     private UserRepository userRepository;
 
     public User signup(@NonNull User user) {
+
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new UserAlreadyExistsException();
+        }
+
         return userRepository.save(user);
     }
 
