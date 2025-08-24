@@ -30,7 +30,7 @@ public class NoteService {
     }
 
     public Note modifyNote(Note note) {
-        return new Note();
+        return noteRepository.save(note);
     }
 
     public void deleteNoteById(Long id) {
