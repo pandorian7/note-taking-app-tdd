@@ -1,7 +1,9 @@
 package com.pandorian.tdd_bdd.service;
 
 import com.pandorian.tdd_bdd.entity.Note;
+import org.springframework.stereotype.Service;
 
+@Service
 public class NoteService {
 
     public final static int MAXIMUM_NOTE_CONTENT_LENGTH = 100;

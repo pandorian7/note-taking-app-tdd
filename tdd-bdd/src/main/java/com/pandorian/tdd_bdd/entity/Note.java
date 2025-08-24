@@ -21,7 +21,7 @@ public class Note {
     @NonNull
     private String content;
 
-    @ManyToMany
+    @ManyToOne
     @Setter(AccessLevel.NONE)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
