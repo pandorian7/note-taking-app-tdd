@@ -98,6 +98,7 @@ public class NoteServiceTest {
             int length = NoteService.MAXIMUM_NOTE_CONTENT_LENGTH + 1;
             String content = "A".repeat(length);
             note.setContent(content);
+            setUpNote();
             assertThrows(NoteContentTooLongException.class, () -> {
                 noteService.addNote(note);
             }, "Note Conte Too Long");
