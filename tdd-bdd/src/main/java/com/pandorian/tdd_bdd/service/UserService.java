@@ -43,6 +43,10 @@ public class UserService {
             throw new PasswordNotComplexEnoughException();
         }
 
+        if (user.getFirstName().isBlank()) {
+            throw new NameEmptyException();
+        }
+
         return userRepository.save(user);
     }
 
