@@ -17,9 +17,17 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
+    }
+
     public User signup(@NonNull User user) {
 
-        if (userRepository.existsByUsername(user.getUsername())) {
+        if (existsByUsername(user.getUsername())) {
             throw new UserAlreadyExistsException();
         }
 

@@ -12,6 +12,9 @@ public class NoteService {
     @Autowired
     private NoteRepository noteRepository;
 
+    @Autowired
+    private UserService userService;
+
     public final static int MAXIMUM_NOTE_CONTENT_LENGTH = 100;
 
     public Note addNote(Note note) {
@@ -37,6 +40,9 @@ public class NoteService {
 
         if (note.getOwner() == null || note.getOwner().getId() == null)
             throw new NullNoteOwnerException();
+
+        if (!userService.existsById(note.getOwner().getId()))
+            throw new UserDoesNotExistException(note.getOwner().getId());
 
         return noteRepository.save(note);
     }
