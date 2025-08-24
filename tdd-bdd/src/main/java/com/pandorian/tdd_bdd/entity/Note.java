@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Data
 @Table(name = "notes")
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class Note {
 
     @Id
+    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
