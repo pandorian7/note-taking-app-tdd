@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import com.pandorian.tdd_bdd.entity.User;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
-    User findByUsernameAndPassword(String username, String password);
+    Optional<User> findByUsernameAndPassword(String username, String password);
 }

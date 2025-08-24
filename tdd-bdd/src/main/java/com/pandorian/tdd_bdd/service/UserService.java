@@ -60,7 +60,11 @@ public class UserService {
 
         if (password.isBlank()) throw new PasswordEmptyException();
 
-        return userRepository.findByUsernameAndPassword(username, password);
+        var maybeUser = userRepository.findByUsernameAndPassword(username, password);
+
+        if (maybeUser.isEmpty()) throw new IncorrectUsernameOrPasswordException();
+
+        return maybeUser.get();
     }
 
     public Long count() {
