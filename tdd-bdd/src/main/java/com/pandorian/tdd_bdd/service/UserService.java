@@ -47,6 +47,10 @@ public class UserService {
             throw new NameEmptyException();
         }
 
+        if (user.getLastName().isBlank())  {
+            throw new NameEmptyException();
+        }
+
         return userRepository.save(user);
     }
 
