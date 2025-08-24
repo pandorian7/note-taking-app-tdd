@@ -143,18 +143,29 @@ public class NoteServiceTest {
         }
 
         @Test
-        void modify_note_failure_null_owner_id() {
-            Note copy = new Note();
-            BeanUtils.copyProperties(note, copy);
+        void modify_note_failure_null_owner_id() throws NoSuchFieldException, IllegalAccessException {
+            Field idField = Note.class.getDeclaredField("id");
+            idField.setAccessible(true);
+
+            Note copyNote = new Note();
+            User copyUser = new User();
+
+            BeanUtils.copyProperties(note, copyNote);
+            BeanUtils.copyProperties(user, copyUser);
+
+
             addNote();
+
+            idField.set(copyNote, note.getId());
+
             assertThrows(NullNoteOwnerException.class, () -> {
-                noteService.modifyNote(copy);
+                noteService.modifyNote(copyNote);
             }, "Updated Note with null User)");
 
-            copy.setOwner(user);
+            copyNote.setOwner(copyUser);
 
             assertThrows(NullNoteOwnerException.class, () -> {
-                noteService.modifyNote(copy);
+                noteService.modifyNote(copyNote);
             }, "Updated Note with unmanaged User");
         }
 
