@@ -33,6 +33,8 @@ public class NoteService {
 
         if (note.getId() == null) throw new NullNoteIdException();
 
+        if (!noteRepository.existsById(note.getId())) throw new NoteDoesNotExistException(note.getId());
+
         return noteRepository.save(note);
     }
 
