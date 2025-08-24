@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -123,6 +124,14 @@ public class NoteServiceTest {
         }
 
         @Test
+        void modify_note_failure_null_id() throws NoSuchFieldException, IllegalAccessException {
+            setUpNote();
+            assertThrows(NullNoteIdException.class, () -> {
+                noteService.modifyNote(note);
+            }, "Updated Note With Null Id");
+        }
+
+        @Test
         void modify_note_failure_invalid_id() throws NoSuchFieldException, IllegalAccessException {
             setUpNote();
             Field idField = Note.class.getDeclaredField("id");
@@ -131,6 +140,22 @@ public class NoteServiceTest {
             assertThrows(NoteDoesNotExistException.class, () -> {
                 noteService.modifyNote(note);
             }, "Updated Non Existing Note");
+        }
+
+        @Test
+        void modify_note_failure_null_owner_id() {
+            Note copy = new Note();
+            BeanUtils.copyProperties(note, copy);
+            addNote();
+            assertThrows(NullNoteOwnerException.class, () -> {
+                noteService.modifyNote(copy);
+            }, "Updated Note with null User)");
+
+            copy.setOwner(user);
+
+            assertThrows(NullNoteOwnerException.class, () -> {
+                noteService.modifyNote(copy);
+            }, "Updated Note with unmanaged User");
         }
 
         @Test
