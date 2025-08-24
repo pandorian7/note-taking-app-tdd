@@ -1,6 +1,7 @@
 package com.pandorian.tdd_bdd.service;
 
 import com.pandorian.tdd_bdd.entity.Note;
+import com.pandorian.tdd_bdd.exceptions.*;
 import com.pandorian.tdd_bdd.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,9 @@ public class NoteService {
     public final static int MAXIMUM_NOTE_CONTENT_LENGTH = 100;
 
     public Note addNote(Note note) {
+
+        if (note.getOwner() == null) throw new OwnerlessNoteException();
+
         return noteRepository.save(note);
     }
 
