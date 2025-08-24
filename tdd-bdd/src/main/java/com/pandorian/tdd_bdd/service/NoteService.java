@@ -55,15 +55,18 @@ public class NoteService {
         return noteRepository.save(note);
     }
 
-    public void deleteNoteById(Long id) {
+    public void deleteNoteById(long id) {
 
+        var res = getNoteById(id);
+
+        noteRepository.deleteById(id);
     }
 
-    public Note getNoteById(Long id) {
-        return new Note();
-    }
+    public Note getNoteById(long id) {
+        var res = noteRepository.findById(id);
 
-    public Long count() {
-        return -1L;
+        if (res.isEmpty()) throw new NoteDoesNotExistException(id);
+
+        return res.get();
     }
 }
