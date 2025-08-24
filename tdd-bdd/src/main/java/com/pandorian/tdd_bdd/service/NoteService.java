@@ -48,6 +48,10 @@ public class NoteService {
 
         if (note.getContent().isBlank()) throw new ContentEmptyNoteException();
 
+        int contentLength = note.getContent().length();
+        if (contentLength > MAXIMUM_NOTE_CONTENT_LENGTH)
+            throw new NoteContentTooLongException(contentLength, MAXIMUM_NOTE_CONTENT_LENGTH);
+
         return noteRepository.save(note);
     }
 
