@@ -55,7 +55,7 @@ public class UserService {
     }
 
     public User login(String username, String password) {
-        return new User();
+        return userRepository.findByUsernameAndPassword(username, password);
     }
 
     public Long count() {
