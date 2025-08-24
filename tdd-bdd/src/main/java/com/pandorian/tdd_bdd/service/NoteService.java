@@ -30,6 +30,9 @@ public class NoteService {
     }
 
     public Note modifyNote(Note note) {
+
+        if (note.getId() == null) throw new NullNoteIdException();
+
         return noteRepository.save(note);
     }
 
