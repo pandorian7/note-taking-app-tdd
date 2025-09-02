@@ -1,0 +1,5 @@
+package com.pandorian.tdd_bdd.exceptions;
+
+public class GeneratedConstants {
+    public static final String ERROR_REGEX = "NullNoteOwnerException|TitleEmptyNoteException|IncorrectUsernameOrPasswordException|OwnerlessNoteException|UsernameEmptyException|PasswordEmptyException|NoteDoesNotExistException|UserAlreadyExistsException|NoteContentTooLongException|UserDoesNotExistException|PasswordTooShortException|PasswordNotComplexEnoughException|NameEmptyException|NullNoteIdException|ContentEmptyNoteException|UsernameTooShortException";
+}
