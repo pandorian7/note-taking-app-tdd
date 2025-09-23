@@ -34,4 +34,18 @@ public class UserController {
         userService.signup(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserCredentials credentials) {
+        if (credentials.getUsername() == null) {
+            throw new com.pandorian.tdd_bdd.exceptions.RequiredArgumentMissingException("username");
+        }
+
+        if (credentials.getPassword() == null) {
+            throw new com.pandorian.tdd_bdd.exceptions.RequiredArgumentMissingException("password");
+        }
+
+        userService.login(credentials.getUsername(), credentials.getPassword());
+        return ResponseEntity.ok().build();
+    }
 }
