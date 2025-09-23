@@ -47,7 +47,7 @@ public class UserService {
             throw new PasswordTooShortException(user.passwordLength());
         }
 
-        if (!user.validatePassword()) {
+        if (user.validatePassword()) {
             throw new PasswordNotComplexEnoughException();
         }
 

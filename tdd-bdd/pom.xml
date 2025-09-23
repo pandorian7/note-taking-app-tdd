@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<scope>test</scope>
+<!--			<scope>test</scope>-->
 		</dependency>
 		<dependency>
 			<groupId>io.cucumber</groupId>
@@ -145,5 +145,14 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>mem-db</id>
+			<properties>
+				<spring-boot.run.profiles>test</spring-boot.run.profiles>
+			</properties>
+		</profile>
+	</profiles>
 
 </project>

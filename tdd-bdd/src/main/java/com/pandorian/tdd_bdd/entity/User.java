@@ -43,12 +43,19 @@ public class User {
         return password.length();
     }
 
+    public boolean isPasswordNull() {
+        return password == null;
+    }
+
     public boolean validatePassword() {
+        if (password == null) {
+            return true;
+        }
         boolean hasLower = password.matches(".*[a-z].*");
         boolean hasUpper = password.matches(".*[A-Z].*");
         boolean hasNumber = password.matches(".*[0-9].*");
-        boolean hasSymbol = password.matches(".*[!@#$%^&*()_+-={};':\"|,.<>/?\\[\\]\\\\].*");
+        boolean hasSymbol = password.matches(".*[!@#$%^&*()_+\\-={};':\"|,.<>/?\\[\\]\\\\].*");
 
-        return hasLower && hasUpper && hasNumber && hasSymbol;
+        return !hasLower || !hasUpper || !hasNumber || !hasSymbol;
     }
 }

@@ -19,6 +19,18 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
+        if (user.getUsername() == null) {
+            throw new com.pandorian.tdd_bdd.exceptions.RequiredArgumentMissingException("username");
+        }
+        if (user.isPasswordNull()) {
+            throw new com.pandorian.tdd_bdd.exceptions.RequiredArgumentMissingException("password");
+        }
+        if (user.getFirstName() == null) {
+            throw new com.pandorian.tdd_bdd.exceptions.RequiredArgumentMissingException("firstName");
+        }
+        if (user.getLastName() == null) {
+            throw new com.pandorian.tdd_bdd.exceptions.RequiredArgumentMissingException("lastName");
+        }
         userService.signup(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
