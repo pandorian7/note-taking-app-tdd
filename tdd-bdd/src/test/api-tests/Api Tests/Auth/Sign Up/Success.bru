@@ -1,0 +1,37 @@
+meta {
+  name: Success
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseURL}}/auth/signup
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username":"user123",
+    "password":"Hello@123",
+    "firstName": "First", 
+    "lastName": "Last"
+  }
+}
+
+tests {
+  test("should handle user creation correctly", function () {
+    const status = res.getStatus();
+    const body = res.getBody();
+  
+    expect(
+      status === 201 ||
+      (status === 409 && body.code === "UserAlreadyExistsException")
+    ).to.be.true;
+  
+    if (status === 409 && body.code === "UserAlreadyExistsException") {
+      console.warn("User already exists (warning).");
+    }
+  });
+  
+}

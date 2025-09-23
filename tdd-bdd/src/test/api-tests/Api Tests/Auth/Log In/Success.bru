@@ -1,0 +1,29 @@
+meta {
+  name: Success
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseURL}}/auth/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "user123",
+    "password": "Hello@123"
+  }
+}
+
+tests {
+  test("should return 200 for successful request", function () {
+    const status = res.getStatus();
+  
+    expect(status).to.equal(200);
+  
+    console.log("Request succeeded.");
+  });
+  
+}

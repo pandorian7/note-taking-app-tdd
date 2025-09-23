@@ -1,0 +1,33 @@
+meta {
+  name: Wrong Method
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseURL}}/auth/signup
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username":"user123",
+    "password":"Hello@123",
+    "firstName": "First", 
+    "lastName": "Last"
+  }
+}
+
+tests {
+  test("should return 405 for unsupported HTTP methods", function () {
+    const status = res.getStatus();
+    const body = res.getBody();
+  
+    expect(status).to.equal(405);
+    expect(body.code).to.equal("METHOD_NOT_ALLOWED");
+  
+    console.warn("Method not allowed (warning).");
+  });
+  
+}

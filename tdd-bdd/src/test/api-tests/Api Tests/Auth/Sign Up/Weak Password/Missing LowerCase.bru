@@ -1,0 +1,33 @@
+meta {
+  name: Missing LowerCase
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseURL}}/auth/signup
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username":"randomuser1",
+    "password":"HELLO@123",
+    "firstName": "First", 
+    "lastName": "Last"
+  }
+}
+
+tests {
+  test("should return 400 for weak password", function () {
+    const status = res.getStatus();
+    const body = res.getBody();
+  
+    expect(status).to.equal(400);
+    expect(body.code).to.equal("PasswordNotComplexEnoughException");
+  
+    console.warn("Password not complex enough (warning).");
+  });
+  
+}

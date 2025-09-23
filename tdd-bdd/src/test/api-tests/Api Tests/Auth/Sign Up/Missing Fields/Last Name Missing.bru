@@ -1,0 +1,20 @@
+meta {
+  name: Last Name Missing
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseURL}}/auth/signup
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username":"user123",
+    "password":"Hello@123",
+    "firstName": "First"
+  
+  }
+}

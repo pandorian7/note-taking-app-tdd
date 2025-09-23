@@ -1,0 +1,31 @@
+meta {
+  name: Username Missing
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8081/auth/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "password": "password"
+  }
+}
+
+tests {
+  test("should return 400 for missing required argument", function () {
+    const status = res.getStatus();
+    const body = res.getBody();
+  
+    expect(status).to.equal(400);
+    expect(body.code).to.equal("REQUIRED_ARGUMENT_MISSING");
+    expect(body.field).to.equal("username");
+  
+    console.warn("Required argument missing (warning).");
+  });
+  
+}

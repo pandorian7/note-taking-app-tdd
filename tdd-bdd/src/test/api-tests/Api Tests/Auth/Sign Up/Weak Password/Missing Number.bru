@@ -1,0 +1,33 @@
+meta {
+  name: Missing Number
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseURL}}/auth/signup
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username":"randomuser3",
+    "password":"Hello@abc",
+    "firstName": "First", 
+    "lastName": "Last"
+  }
+}
+
+tests {
+  test("should return 400 for weak password", function () {
+    const status = res.getStatus();
+    const body = res.getBody();
+  
+    expect(status).to.equal(400);
+    expect(body.code).to.equal("PasswordNotComplexEnoughException");
+  
+    console.warn("Password not complex enough (warning).");
+  });
+  
+}
