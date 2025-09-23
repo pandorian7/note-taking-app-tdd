@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.pandorian.tdd_bdd.entity.User;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -73,6 +75,10 @@ public class UserService {
         if (maybeUser.isEmpty()) throw new IncorrectUsernameOrPasswordException();
 
         return maybeUser.get();
+    }
+
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public Long count() {

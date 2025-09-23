@@ -10,6 +10,7 @@ import java.util.List;
 @Table(name = "users")
 @NoArgsConstructor
 @RequiredArgsConstructor
+@ToString(exclude = "notes")
 public class User {
 
     @Id

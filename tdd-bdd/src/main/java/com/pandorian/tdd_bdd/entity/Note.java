@@ -1,5 +1,6 @@
 package com.pandorian.tdd_bdd.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class Note {
 
     @ManyToOne
     @Setter(AccessLevel.NONE)
+    @JsonIgnore
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 

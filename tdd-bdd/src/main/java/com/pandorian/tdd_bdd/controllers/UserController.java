@@ -1,6 +1,7 @@
 package com.pandorian.tdd_bdd.controllers;
 
 import com.pandorian.tdd_bdd.entity.User;
+import com.pandorian.tdd_bdd.service.JWTService;
 import com.pandorian.tdd_bdd.service.UserService;
 import com.pandorian.tdd_bdd.types.UserCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class UserController {
     @Autowired
     UserService userService;
+
+    @Autowired
+    JWTService jwtService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
@@ -45,7 +51,10 @@ public class UserController {
             throw new com.pandorian.tdd_bdd.exceptions.RequiredArgumentMissingException("password");
         }
 
-        userService.login(credentials.getUsername(), credentials.getPassword());
-        return ResponseEntity.ok().build();
+        User user = userService.login(credentials.getUsername(), credentials.getPassword());
+
+        String token = jwtService.generateToken(user.getUsername());
+
+        return ResponseEntity.ok(Map.of("token", token));
     }
 }
