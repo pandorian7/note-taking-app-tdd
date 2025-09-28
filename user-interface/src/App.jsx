@@ -3,6 +3,7 @@ import Home from './pages/Home'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import Notes from './pages/Notes'
+import './styles/App.css'
 
 function App() {
   return (
