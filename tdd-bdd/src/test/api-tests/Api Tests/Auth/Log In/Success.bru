@@ -17,13 +17,21 @@ body:json {
   }
 }
 
+script:post-response {
+  if (res.getStatus() == 200 && req.body.token) {
+    bru.setVar("token", req.body.token)
+  }
+}
+
 tests {
-  test("should return 200 for successful request", function () {
+  test("should return 200 for successful request and contain token", function () {
     const status = res.getStatus();
+    const body = res.getBody();
   
     expect(status).to.equal(200);
+    expect(body).to.have.property("token");
   
-    console.log("Request succeeded.");
+    console.log("Request succeeded with token.");
   });
   
 }
