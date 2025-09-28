@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import AddNoteModal from '../components/AddNoteModal'
+import EditNoteModal from '../components/EditNoteModal'
 
 const Notes = () => {
   const [notes, setNotes] = useState([
@@ -30,10 +32,32 @@ const Notes = () => {
     }
   ])
 
-  const handleEdit = (noteId) => {
-    console.log('Edit note:', noteId)
-    // Handle edit functionality here
-    alert(`Edit functionality for note ${noteId} - Coming soon!`)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editingNote, setEditingNote] = useState(null)
+
+  const handleAddNote = (noteData) => {
+    const newNote = {
+      id: Date.now(), // Simple ID generation
+      title: noteData.title,
+      content: noteData.content
+    }
+    setNotes([newNote, ...notes])
+  }
+
+  const handleEditNote = (noteId) => {
+    const note = notes.find(n => n.id === noteId)
+    if (note) {
+      setEditingNote(note)
+      setIsEditModalOpen(true)
+    }
+  }
+
+  const handleUpdateNote = (updatedNote) => {
+    setNotes(notes.map(note => 
+      note.id === updatedNote.id ? updatedNote : note
+    ))
+    setEditingNote(null)
   }
 
   const handleDelete = (noteId) => {
@@ -56,7 +80,10 @@ const Notes = () => {
             <Link to="/" className="btn btn-outline">
               ← Back to Home
             </Link>
-            <button className="btn btn-primary">
+            <button 
+              className="btn btn-primary"
+              onClick={() => setIsAddModalOpen(true)}
+            >
               + Add New Note
             </button>
           </div>
@@ -80,7 +107,7 @@ const Notes = () => {
                 <div className="note-actions">
                   <button 
                     className="btn btn-secondary btn-small"
-                    onClick={() => handleEdit(note.id)}
+                    onClick={() => handleEditNote(note.id)}
                   >
                     ✏️ Edit
                   </button>
@@ -95,6 +122,24 @@ const Notes = () => {
             ))}
           </div>
         )}
+
+        {/* Add Note Modal */}
+        <AddNoteModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onSave={handleAddNote}
+        />
+
+        {/* Edit Note Modal */}
+        <EditNoteModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false)
+            setEditingNote(null)
+          }}
+          onSave={handleUpdateNote}
+          note={editingNote}
+        />
       </div>
     </div>
   )
