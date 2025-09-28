@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import AddNoteModal from '../components/AddNoteModal'
 import EditNoteModal from '../components/EditNoteModal'
+import DeleteConfirmModal from '../components/DeleteConfirmModal'
 
 const Notes = () => {
   const [notes, setNotes] = useState([
@@ -35,6 +36,8 @@ const Notes = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editingNote, setEditingNote] = useState(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [deletingNote, setDeletingNote] = useState(null)
 
   const handleAddNote = (noteData) => {
     const newNote = {
@@ -60,9 +63,18 @@ const Notes = () => {
     setEditingNote(null)
   }
 
-  const handleDelete = (noteId) => {
-    if (window.confirm('Are you sure you want to delete this note?')) {
-      setNotes(notes.filter(note => note.id !== noteId))
+  const handleDeleteClick = (noteId) => {
+    const note = notes.find(n => n.id === noteId)
+    if (note) {
+      setDeletingNote(note)
+      setIsDeleteModalOpen(true)
+    }
+  }
+
+  const handleDeleteConfirm = () => {
+    if (deletingNote) {
+      setNotes(notes.filter(note => note.id !== deletingNote.id))
+      setDeletingNote(null)
     }
   }
 
@@ -113,7 +125,7 @@ const Notes = () => {
                   </button>
                   <button 
                     className="btn btn-danger btn-small"
-                    onClick={() => handleDelete(note.id)}
+                    onClick={() => handleDeleteClick(note.id)}
                   >
                     🗑️ Delete
                   </button>
@@ -139,6 +151,17 @@ const Notes = () => {
           }}
           onSave={handleUpdateNote}
           note={editingNote}
+        />
+
+        {/* Delete Confirmation Modal */}
+        <DeleteConfirmModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false)
+            setDeletingNote(null)
+          }}
+          onConfirm={handleDeleteConfirm}
+          noteTitle={deletingNote?.title}
         />
       </div>
     </div>
