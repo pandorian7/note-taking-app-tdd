@@ -1,0 +1,35 @@
+meta {
+  name: Success
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8081/notes
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Note Title",
+    "content": "Note Content"
+  }
+}
+
+tests {
+  test("should return 201 for successful note creating and return note with id", function () {
+    const status = res.getStatus();
+    const body = res.getBody();
+  
+    expect(status).to.equal(201);
+    expect(body).to.have.property("id");
+    expect(body).to.have.property("title");
+    expect(body).to.have.property("content");
+  });
+  
+}
+
+settings {
+  encodeUrl: true
+}

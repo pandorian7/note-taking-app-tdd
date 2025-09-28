@@ -1,0 +1,33 @@
+meta {
+  name: Missing Title
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://localhost:8081/notes/{{noteId}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "content": "Note Content"
+  }
+}
+
+tests {
+  test("should return 400 for missing title", function () {
+    const status = res.getStatus();
+    const body = res.getBody();
+  
+    expect(status).to.equal(400);
+    expect(body.code).to.equal("REQUIRED_ARGUMENT_MISSING");
+    expect(body.field).to.equal("title");
+  });
+  
+}
+
+settings {
+  encodeUrl: true
+}

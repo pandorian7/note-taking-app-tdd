@@ -1,0 +1,31 @@
+meta {
+  name: Success
+  type: http
+  seq: 2
+}
+
+delete {
+  url: http://localhost:8081/notes/{{noteId}}
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Note Title Modified",
+    "content": "Note Content Modified"
+  }
+}
+
+tests {
+  test("should return 204 for successful node deletion", function () {
+    const status = res.getStatus();
+  
+    expect(status).to.equal(204);
+  });
+  
+}
+
+settings {
+  encodeUrl: true
+}

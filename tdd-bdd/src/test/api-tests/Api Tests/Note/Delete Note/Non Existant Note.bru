@@ -1,0 +1,33 @@
+meta {
+  name: Non Existant Note
+  type: http
+  seq: 1
+}
+
+delete {
+  url: http://localhost:8081/notes/999999
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Note Title Modified",
+    "content": "Note Content Modified"
+  }
+}
+
+tests {
+  test("should return 404 for non existant note", function () {
+    const status = res.getStatus();
+    const body = res.getBody();
+  
+    expect(status).to.equal(404);
+    expect(body.code).to.equal("NoteDoesNotExistException");
+  });
+  
+}
+
+settings {
+  encodeUrl: true
+}

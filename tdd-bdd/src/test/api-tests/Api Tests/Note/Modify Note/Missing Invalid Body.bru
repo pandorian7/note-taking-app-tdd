@@ -1,11 +1,11 @@
 meta {
   name: Missing Invalid Body
   type: http
-  seq: 5
+  seq: 2
 }
 
-post {
-  url: {{baseURL}}/auth/signup
+put {
+  url: http://localhost:8081/notes/{{noteId}}
   body: json
   auth: inherit
 }
@@ -20,4 +20,8 @@ tests {
   
   });
   
+}
+
+settings {
+  encodeUrl: true
 }

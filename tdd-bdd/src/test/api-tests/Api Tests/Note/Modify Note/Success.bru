@@ -1,0 +1,35 @@
+meta {
+  name: Success
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:8081/notes/{{noteId}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Note Title Modified",
+    "content": "Note Content Modified"
+  }
+}
+
+tests {
+  test("should return 200 for successful note modification and return note with id", function () {
+    const status = res.getStatus();
+    const body = res.getBody();
+  
+    expect(status).to.equal(200);
+    expect(body).to.have.property("id");
+    expect(body).to.have.property("title");
+    expect(body).to.have.property("content");
+  });
+  
+}
+
+settings {
+  encodeUrl: true
+}

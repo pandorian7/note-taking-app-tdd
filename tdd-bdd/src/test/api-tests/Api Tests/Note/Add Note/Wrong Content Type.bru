@@ -1,0 +1,28 @@
+meta {
+  name: Wrong Content Type
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8081/notes
+  body: multipartForm
+  auth: inherit
+}
+
+tests {
+  test("should return 415 for unsupported media type", function () {
+    const status = res.getStatus();
+    const body = res.getBody();
+  
+    expect(status).to.equal(415);
+    expect(body.code).to.equal("UNSUPPORTED_MEDIA_TYPE");
+  
+    console.warn("Unsupported media type (warning).");
+  });
+  
+}
+
+settings {
+  encodeUrl: true
+}
