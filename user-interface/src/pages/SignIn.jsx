@@ -1,23 +1,47 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import api from '../services/api'
 
 const SignIn = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     })
+    // Clear error when user starts typing
+    if (error) setError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Sign in data:', formData)
-    // Handle sign in logic here
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await api.auth.signIn({
+        username: formData.username,
+        password: formData.password
+      })
+      
+      console.log('Login successful:', response)
+      // Redirect to notes page after successful login
+      navigate('/notes')
+    } catch (error) {
+      console.error('Login failed:', error)
+      
+      // Use the actual error message from the API
+      setError(error.message || 'Login failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -31,6 +55,20 @@ const SignIn = () => {
             </div>
             
             <form onSubmit={handleSubmit}>
+              {error && (
+                <div style={{
+                  backgroundColor: 'var(--danger-light)',
+                  color: 'var(--danger-color)',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '8px',
+                  marginBottom: '1rem',
+                  fontSize: '0.875rem',
+                  border: '1px solid var(--danger-color)'
+                }}>
+                  {error}
+                </div>
+              )}
+              
               <div className="form-group">
                 <label htmlFor="username" className="form-label">Username</label>
                 <input
@@ -42,6 +80,7 @@ const SignIn = () => {
                   onChange={handleChange}
                   placeholder="Enter your username"
                   required
+                  disabled={loading}
                 />
               </div>
               
@@ -56,11 +95,17 @@ const SignIn = () => {
                   onChange={handleChange}
                   placeholder="Enter your password"
                   required
+                  disabled={loading}
                 />
               </div>
               
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
-                Sign In
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                style={{ width: '100%', marginTop: '1rem' }}
+                disabled={loading}
+              >
+                {loading ? 'Signing In...' : 'Sign In'}
               </button>
             </form>
             

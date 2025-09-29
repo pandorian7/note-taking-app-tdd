@@ -1,7 +1,13 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import api from '../services/api'
 
 const Home = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  useEffect(() => {
+    setIsAuthenticated(api.tokenManager.isAuthenticated())
+  }, [])
   return (
     <div className="page-container">
       <div className="container">
@@ -12,15 +18,28 @@ const Home = () => {
           </p>
           
           <div className="nav-links">
-            <Link to="/notes" className="btn btn-primary">
-              📝 View My Notes
-            </Link>
-            <Link to="/signin" className="btn btn-outline">
-              🔑 Sign In
-            </Link>
-            <Link to="/signup" className="btn btn-secondary">
-              ✨ Get Started
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link to="/notes" className="btn btn-primary">
+                  📝 View My Notes
+                </Link>
+                <button 
+                  className="btn btn-danger"
+                  onClick={() => api.auth.signOut()}
+                >
+                  🚪 Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/signin" className="btn btn-primary">
+                  🔑 Sign In
+                </Link>
+                <Link to="/signup" className="btn btn-secondary">
+                  ✨ Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
@@ -53,15 +72,31 @@ const Home = () => {
         </div>
 
         <div className="card" style={{ marginTop: '3rem', textAlign: 'center' }}>
-          <h2 className="card-title" style={{ marginBottom: '1rem' }}>
-            Ready to get started?
-          </h2>
-          <p className="card-subtitle" style={{ marginBottom: '1.5rem' }}>
-            Join thousands of users who trust NoteTaker with their ideas and thoughts.
-          </p>
-          <Link to="/signup" className="btn btn-primary">
-            Create Your Account →
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <h2 className="card-title" style={{ marginBottom: '1rem' }}>
+                Welcome back!
+              </h2>
+              <p className="card-subtitle" style={{ marginBottom: '1.5rem' }}>
+                Ready to continue organizing your thoughts and ideas?
+              </p>
+              <Link to="/notes" className="btn btn-primary">
+                Go to My Notes →
+              </Link>
+            </>
+          ) : (
+            <>
+              <h2 className="card-title" style={{ marginBottom: '1rem' }}>
+                Ready to get started?
+              </h2>
+              <p className="card-subtitle" style={{ marginBottom: '1.5rem' }}>
+                Join thousands of users who trust NoteTaker with their ideas and thoughts.
+              </p>
+              <Link to="/signup" className="btn btn-primary">
+                Create Your Account →
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </div>

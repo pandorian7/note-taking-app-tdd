@@ -1,25 +1,67 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import api from '../services/api'
 
 const SignUp = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     username: '',
     password: ''
   })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     })
+    // Clear messages when user starts typing
+    if (error) setError('')
+    if (success) setSuccess('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Sign up data:', formData)
-    // Handle sign up logic here
+    setLoading(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const response = await api.auth.signUp({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        username: formData.username,
+        password: formData.password
+      })
+      
+      console.log('Signup successful:', response)
+      setSuccess('Account created successfully! You can now sign in.')
+      
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        username: '',
+        password: ''
+      })
+      
+      // Redirect to sign in page after a short delay
+      setTimeout(() => {
+        navigate('/signin')
+      }, 2000)
+      
+    } catch (error) {
+      console.error('Signup failed:', error)
+      
+      // Use the actual error message from the API
+      setError(error.message || 'Signup failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -33,6 +75,34 @@ const SignUp = () => {
             </div>
             
             <form onSubmit={handleSubmit}>
+              {error && (
+                <div style={{
+                  backgroundColor: 'var(--danger-light)',
+                  color: 'var(--danger-color)',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '8px',
+                  marginBottom: '1rem',
+                  fontSize: '0.875rem',
+                  border: '1px solid var(--danger-color)'
+                }}>
+                  {error}
+                </div>
+              )}
+              
+              {success && (
+                <div style={{
+                  backgroundColor: '#d1fae5',
+                  color: 'var(--secondary-color)',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '8px',
+                  marginBottom: '1rem',
+                  fontSize: '0.875rem',
+                  border: '1px solid var(--secondary-color)'
+                }}>
+                  {success}
+                </div>
+              )}
+              
               <div className="form-group">
                 <label htmlFor="firstName" className="form-label">First Name</label>
                 <input
@@ -44,6 +114,7 @@ const SignUp = () => {
                   onChange={handleChange}
                   placeholder="Enter your first name"
                   required
+                  disabled={loading}
                 />
               </div>
               
@@ -58,6 +129,7 @@ const SignUp = () => {
                   onChange={handleChange}
                   placeholder="Enter your last name"
                   required
+                  disabled={loading}
                 />
               </div>
               
@@ -72,6 +144,7 @@ const SignUp = () => {
                   onChange={handleChange}
                   placeholder="Choose a username"
                   required
+                  disabled={loading}
                 />
               </div>
               
@@ -86,11 +159,17 @@ const SignUp = () => {
                   onChange={handleChange}
                   placeholder="Create a password"
                   required
+                  disabled={loading}
                 />
               </div>
               
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
-                Create Account
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                style={{ width: '100%', marginTop: '1rem' }}
+                disabled={loading}
+              >
+                {loading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
             

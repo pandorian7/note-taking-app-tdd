@@ -1,37 +1,16 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import AddNoteModal from '../components/AddNoteModal'
 import EditNoteModal from '../components/EditNoteModal'
 import DeleteConfirmModal from '../components/DeleteConfirmModal'
+import api from '../services/api'
 
 const Notes = () => {
-  const [notes, setNotes] = useState([
-    {
-      id: 1,
-      title: "Meeting Notes",
-      content: "Discussed the new project requirements with the team. Need to focus on user authentication and note-taking functionality. Timeline: 2 weeks for MVP."
-    },
-    {
-      id: 2,
-      title: "Grocery List",
-      content: "Milk, Bread, Eggs, Apples, Chicken, Rice, Pasta, Tomatoes, Onions, Cheese. Don't forget to check if we need more coffee!"
-    },
-    {
-      id: 3,
-      title: "Book Ideas",
-      content: "1. The Art of Problem Solving 2. JavaScript Mastery Guide 3. Design Patterns in Modern Web Development 4. Building Scalable Applications"
-    },
-    {
-      id: 4,
-      title: "Workout Plan",
-      content: "Monday: Chest & Triceps, Tuesday: Back & Biceps, Wednesday: Legs, Thursday: Shoulders, Friday: Cardio, Weekend: Rest or light activities"
-    },
-    {
-      id: 5,
-      title: "Travel Destinations",
-      content: "Places to visit: Japan (Cherry blossoms), Iceland (Northern lights), New Zealand (Adventure sports), Italy (History & Food), Norway (Fjords)"
-    }
-  ])
+  const navigate = useNavigate()
+  const [notes, setNotes] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [operationLoading, setOperationLoading] = useState(false)
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -39,13 +18,54 @@ const Notes = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [deletingNote, setDeletingNote] = useState(null)
 
-  const handleAddNote = (noteData) => {
-    const newNote = {
-      id: Date.now(), // Simple ID generation
-      title: noteData.title,
-      content: noteData.content
+  // Check authentication and fetch notes on component mount
+  useEffect(() => {
+    const fetchNotes = async () => {
+      // Check if user is authenticated
+      if (!api.tokenManager.isAuthenticated()) {
+        navigate('/signin')
+        return
+      }
+
+      try {
+        setLoading(true)
+        setError('')
+        const fetchedNotes = await api.notes.getAllNotes()
+        setNotes(fetchedNotes)
+      } catch (error) {
+        console.error('Failed to fetch notes:', error)
+        if (error.code === 'UNAUTHORIZED' || error.status === 401) {
+          // Token might be expired, redirect to signin
+          navigate('/signin')
+        } else {
+          setError('Failed to load notes. Please try again.')
+        }
+      } finally {
+        setLoading(false)
+      }
     }
-    setNotes([newNote, ...notes])
+
+    fetchNotes()
+  }, [navigate])
+
+  const handleAddNote = async (noteData) => {
+    try {
+      setOperationLoading(true)
+      const newNote = await api.notes.createNote({
+        title: noteData.title,
+        content: noteData.content
+      })
+      setNotes([newNote, ...notes])
+    } catch (error) {
+      console.error('Failed to create note:', error)
+      if (error.status === 401) {
+        navigate('/signin')
+      } else {
+        alert('Failed to create note. Please try again.')
+      }
+    } finally {
+      setOperationLoading(false)
+    }
   }
 
   const handleEditNote = (noteId) => {
@@ -56,11 +76,27 @@ const Notes = () => {
     }
   }
 
-  const handleUpdateNote = (updatedNote) => {
-    setNotes(notes.map(note => 
-      note.id === updatedNote.id ? updatedNote : note
-    ))
-    setEditingNote(null)
+  const handleUpdateNote = async (updatedNote) => {
+    try {
+      setOperationLoading(true)
+      const updated = await api.notes.updateNote(updatedNote.id, {
+        title: updatedNote.title,
+        content: updatedNote.content
+      })
+      setNotes(notes.map(note => 
+        note.id === updatedNote.id ? updated : note
+      ))
+      setEditingNote(null)
+    } catch (error) {
+      console.error('Failed to update note:', error)
+      if (error.status === 401) {
+        navigate('/signin')
+      } else {
+        alert('Failed to update note. Please try again.')
+      }
+    } finally {
+      setOperationLoading(false)
+    }
   }
 
   const handleDeleteClick = (noteId) => {
@@ -71,11 +107,28 @@ const Notes = () => {
     }
   }
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (deletingNote) {
-      setNotes(notes.filter(note => note.id !== deletingNote.id))
-      setDeletingNote(null)
+      try {
+        setOperationLoading(true)
+        await api.notes.deleteNote(deletingNote.id)
+        setNotes(notes.filter(note => note.id !== deletingNote.id))
+        setDeletingNote(null)
+      } catch (error) {
+        console.error('Failed to delete note:', error)
+        if (error.status === 401) {
+          navigate('/signin')
+        } else {
+          alert('Failed to delete note. Please try again.')
+        }
+      } finally {
+        setOperationLoading(false)
+      }
     }
+  }
+
+  const handleSignOut = () => {
+    api.auth.signOut()
   }
 
   return (
@@ -95,13 +148,41 @@ const Notes = () => {
             <button 
               className="btn btn-primary"
               onClick={() => setIsAddModalOpen(true)}
+              disabled={operationLoading}
             >
               + Add New Note
+            </button>
+            <button 
+              className="btn btn-danger"
+              onClick={handleSignOut}
+            >
+              Sign Out
             </button>
           </div>
         </div>
 
-        {notes.length === 0 ? (
+        {error && (
+          <div style={{
+            backgroundColor: 'var(--danger-light)',
+            color: 'var(--danger-color)',
+            padding: '1rem',
+            borderRadius: '8px',
+            marginBottom: '2rem',
+            textAlign: 'center',
+            border: '1px solid var(--danger-color)'
+          }}>
+            {error}
+          </div>
+        )}
+
+        {loading ? (
+          <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
+            <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📝</div>
+            <h3 style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+              Loading your notes...
+            </h3>
+          </div>
+        ) : notes.length === 0 ? (
           <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
             <h3 style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
               No notes yet
@@ -120,12 +201,14 @@ const Notes = () => {
                   <button 
                     className="btn btn-secondary btn-small"
                     onClick={() => handleEditNote(note.id)}
+                    disabled={operationLoading}
                   >
                     ✏️ Edit
                   </button>
                   <button 
                     className="btn btn-danger btn-small"
                     onClick={() => handleDeleteClick(note.id)}
+                    disabled={operationLoading}
                   >
                     🗑️ Delete
                   </button>
