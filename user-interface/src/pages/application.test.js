@@ -1,9 +1,17 @@
 const { Builder, By } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
 const generatePassword = require('generate-password');
+
+const headless = process.env.HEADLESS?.toLowerCase() !== 'false';
 
 describe('Test Note Taking App', () => {
   /** @type {import('selenium-webdriver').WebDriver} */
   let driver;
+
+  const options = new chrome.Options();
+  options.addArguments('--headless');
+  options.addArguments('--disable-gpu');
+  options.addArguments('--window-size=1920,1080');
 
   const baseUrl = 'http://localhost:5173';
 
@@ -23,7 +31,15 @@ describe('Test Note Taking App', () => {
   }
 
   beforeAll(async () => {
-    driver = await new Builder().forBrowser('chrome').build();
+
+    if (headless) {
+      driver = new Builder().forBrowser('chrome').setChromeOptions(options);
+    } else {    
+      driver = new Builder().forBrowser('chrome');
+    }
+
+    driver = await driver.build();
+
     const rand = Math.random().toString(36).substring(2, 6);
     shortUsername = `u${rand.substring(0, 2)}`;
     username = `user${rand}`;
@@ -303,7 +319,7 @@ describe('Test Note Taking App', () => {
   test('Sign out button should log out and redirect to home', async () => {
 
     await driver.get(`${baseUrl}/notes`);
-    await wait();
+    await wait(2000);
     await element.signOutButton().click();
     await wait(2000);
 
