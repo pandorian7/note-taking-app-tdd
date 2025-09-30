@@ -28,7 +28,7 @@ jobs:
 
   ui-test:
     runs-on: ubuntu-latest
-    needs: test
+    needs: maven-test
     env:
       PORT: 8080
 
