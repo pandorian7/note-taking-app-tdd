@@ -53,6 +53,11 @@ jobs:
         with:
           version: 8
 
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
       - name: Make Maven wrapper executable
         run: chmod +x ./mvnw
         working-directory: ./tdd-bdd
