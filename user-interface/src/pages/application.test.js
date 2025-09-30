@@ -19,7 +19,15 @@ describe('Test Note Taking App', () => {
     '--disable-backgrounding-occluded-windows',
     '--disable-renderer-backgrounding',
     '--disable-features=TranslateUI',
-    '--disable-ipc-flooding-protection'
+    '--disable-ipc-flooding-protection',
+    '--disable-web-security',
+    '--disable-features=VizDisplayCompositor',
+    '--disable-logging',
+    '--disable-default-apps',
+    '--disable-sync',
+    '--no-first-run',
+    '--no-default-browser-check',
+    '--remote-debugging-port=9222'
   ]);
 
   const baseUrl = 'http://localhost:5173';
@@ -40,14 +48,16 @@ describe('Test Note Taking App', () => {
   }
 
   beforeAll(async () => {
-
     if (headless) {
-      driver = new Builder().forBrowser('chrome').setChromeOptions(options);
+      driver = await new Builder()
+        .forBrowser('chrome')
+        .setChromeOptions(options)
+        .build();
     } else {
-      driver = new Builder().forBrowser('chrome');
+      driver = await new Builder()
+        .forBrowser('chrome')
+        .build();
     }
-
-    driver = await driver.build();
 
     const rand = Math.random().toString(36).substring(2, 6);
     shortUsername = `u${rand.substring(0, 2)}`;
