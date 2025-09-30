@@ -9,9 +9,18 @@ describe('Test Note Taking App', () => {
   let driver;
 
   const options = new chrome.Options();
-  options.addArguments('--headless');
-  options.addArguments('--disable-gpu');
-  options.addArguments('--window-size=1920,1080');
+  options.addArguments([
+    '--headless',
+    '--no-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu',
+    '--disable-extensions',
+    '--disable-background-timer-throttling',
+    '--disable-backgrounding-occluded-windows',
+    '--disable-renderer-backgrounding',
+    '--disable-features=TranslateUI',
+    '--disable-ipc-flooding-protection'
+  ]);
 
   const baseUrl = 'http://localhost:5173';
 
@@ -34,7 +43,7 @@ describe('Test Note Taking App', () => {
 
     if (headless) {
       driver = new Builder().forBrowser('chrome').setChromeOptions(options);
-    } else {    
+    } else {
       driver = new Builder().forBrowser('chrome');
     }
 
