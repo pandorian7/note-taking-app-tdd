@@ -1,6 +1,7 @@
 package com.pandorian.tdd_bdd.interceptor;
 
 import com.pandorian.tdd_bdd.annotations.AuthRequired;
+import com.pandorian.tdd_bdd.exceptions.ActionIsForbidden;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,7 @@ public class AuthRequiredInterceptor implements HandlerInterceptor {
             if (hasAuthRequired) {
                 Object username = request.getAttribute("username");
                 if (username == null) {
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Authentication required");
-                    return false;
+                    throw new ActionIsForbidden();
                 }
             }
         }
