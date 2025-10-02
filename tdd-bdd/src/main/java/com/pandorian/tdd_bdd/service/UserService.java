@@ -70,11 +70,15 @@ public class UserService {
 
         if (password.isBlank()) throw new PasswordEmptyException();
 
-        var maybeUser = userRepository.findByUsernameAndPassword(username, password);
+        var maybeUser = userRepository.findByUsername(username);
 
         if (maybeUser.isEmpty()) throw new IncorrectUsernameOrPasswordException();
 
-        return maybeUser.get();
+        var user = maybeUser.get();
+
+        if (!user.checkPassword(password)) throw new IncorrectUsernameOrPasswordException();
+
+        return user;
     }
 
     public Optional<User> getUserByUsername(String username) {

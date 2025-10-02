@@ -2,6 +2,7 @@ package com.pandorian.tdd_bdd.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.List;
 
@@ -9,9 +10,15 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
-@RequiredArgsConstructor
 @ToString(exclude = "notes")
 public class User {
+
+    public User(String username, String password, String firstName, String lastName) {
+        this.username = username;
+        setPassword(password);
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     @Id
     @Setter(AccessLevel.NONE)
@@ -22,9 +29,24 @@ public class User {
     @Column(unique = true)
     private String username;
 
+    @Transient
     @NonNull
+    @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     private String password;
+
+    public void setPassword(String password) {
+        this.password = password;
+        this.passwordHash = DigestUtils.sha256Hex(password);
+    }
+
+    public boolean checkPassword(String password) {
+        return this.passwordHash.equals(DigestUtils.sha256Hex(password));
+    }
+
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    private String passwordHash;
 
     @NonNull
     private String firstName;
